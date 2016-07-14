@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/gvalkov/golang-evdev"
 )
@@ -37,10 +38,14 @@ func main() {
 							ctrl = true
 						case 36:
 							if ctrl {
-								fmt.Print(".")
-								cmd := exec.Command("xdotool", "key", "Return")
-								cmd.Run()
-								fmt.Print("|")
+								cmd := exec.Command("xdotool", "getwindowfocus", "getwindowname")
+								wname, _ := cmd.Output()
+								name := strings.TrimSpace(string(wname))
+								if name != "Yakuake" && !strings.Contains(name, "Konsole") {
+									fmt.Println(name)
+									cmd = exec.Command("xdotool", "key", "Return")
+									cmd.Run()
+								}
 							}
 						}
 					case 0:
